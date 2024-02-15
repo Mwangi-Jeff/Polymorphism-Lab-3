@@ -1,0 +1,103 @@
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+class VehicleRentalService {
+
+    public static final String VEHICLE_TYPE_CAR = "CAR";
+    public static final String VEHICLE_TYPE_BIKE = "BIKE";
+    public static final String VEHICLE_TYPE_SCOOTER = "SCOOTER";
+
+    public static final boolean WITH_INSURANCE = true;
+    public static final boolean WITHOUT_INSURANCE = false;
+
+    private Map<String, List<Vehicle>> fleet;
+
+    public VehicleRentalService(Map<String, List<Vehicle>> fleet) {
+        this.fleet = fleet;
+    }
+
+    public RentalInfo rentVehicle(int rentalDuration, String vehicleType, boolean withInsurance) {
+        if (!isValidVehicleType(vehicleType)) {
+            throw new IllegalArgumentException("Invalid vehicle type: " + vehicleType);
+        }
+
+        Vehicle availableVehicle = findAvailableVehicle(vehicleType);
+        if (availableVehicle == null) {
+            return null;
+        }
+
+        double rentalPrice = calculateRentalPrice(rentalDuration, vehicleType, withInsurance);
+        rentVehicle(availableVehicle);
+        return new RentalInfo(vehicleType, rentalDuration, withInsurance, rentalPrice);
+    }
+
+    private boolean isValidVehicleType(String vehicleType) {
+        return Arrays.asList(VEHICLE_TYPE_CAR, VEHICLE_TYPE_BIKE, VEHICLE_TYPE_SCOOTER).contains(vehicleType);
+    }
+
+    private Vehicle findAvailableVehicle(String vehicleType) {
+        List<Vehicle> vehicles = fleet.get(vehicleType);
+        for (Vehicle vehicle : vehicles) {
+            if (!vehicle.isRented()) {
+                return vehicle;
+            }
+        }
+        return null;
+    }
+
+    private double calculateRentalPrice(int rentalDuration, String vehicleType, boolean withInsurance) {
+        // Implement logic to calculate rental price based on vehicle type, duration, and insurance
+        return 0.0; // Replace with actual calculation
+    }
+
+    private void rentVehicle(Vehicle vehicle) {
+        vehicle.setRented(true);
+    }
+
+    // Add inner classes for Vehicle, Car, Bike, Scooter, and RentalInfo
+
+    public static class Vehicle {
+        private String make;
+        private String model;
+        private boolean rented;
+
+        // Getters, setters, and constructor
+
+        public boolean isRented() {
+            return rented;
+        }
+
+        public void setRented(boolean rented) {
+            this.rented = rented;
+        }
+    }
+
+    public static class Car extends Vehicle {
+        // Specific attributes and methods for cars
+    }
+
+    public static class Bike extends Vehicle {
+        // Specific attributes and methods for bikes
+    }
+
+    public static class Scooter extends Vehicle {
+        // Specific attributes and methods for scooters
+    }
+
+    public static class RentalInfo {
+        private String vehicleType;
+        private int rentalDuration;
+        private boolean withInsurance;
+        private double rentalPrice;
+
+        // Getters and constructor
+
+        public RentalInfo(String vehicleType, int rentalDuration, boolean withInsurance, double rentalPrice) {
+            this.vehicleType = vehicleType;
+            this.rentalDuration = rentalDuration;
+            this.withInsurance = withInsurance;
+            this.rentalPrice = rentalPrice;
+        }
+    }
+}
